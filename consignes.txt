@@ -1,0 +1,76 @@
+Scrapeur Node.js
+
+Votre objectif est de réaliser un robot en Node.js et MySQL. 
+
+Ce robot devra 
+	1. Parcourir un site internet automatiquement
+	2. Extraire les données pertinentes des pages
+	3. Sauvegarder ces données de manière structurée, y compris les images
+	4. Envoyer un email à l'administrateur lors de l'ajout de nouvelles données
+	(5.) Permettre la consultation en ligne des données
+	(6.) Détecter les items retirés du site
+	(7.) Relancer votre script à intervalle régulier
+	(8.) Calculer des statistiques
+
+
+Ce document prend l'exemple d'un brocanteur qui souhaite être alerté lors de la parution de nouveaux fauteuils sur Nantes, sur le site LeBonCoin. 
+
+
+1. PARCOURIR UN SITE INTERNET
+
+	A.
+		Sur exécution de votre application Node, une requête doit être réalisée à une URL de votre choix. Utiliser le module "request" pour vous aider.
+		Cette URL doit normalement être une liste d'items, par exemple : 
+		https://www.leboncoin.fr/ameublement/offres/pays_de_la_loire/?q=fauteuil
+
+		Sur cette page, vous devez extraire tous les liens vers les pages de détails de chacun des items.
+
+	B.
+		Puis, votre script doit réaliser une requête vers chacune de ces pages de détail.
+		Essayer d'attendre une seconde entre chaque requête à ces pages de détail, pour limiter la charge sur le serveur de votre cible
+
+2. EXTRAIRE LES DONNÉES
+	
+	Sur réception du code source d'une page détaillée, utilisez le module "cheerio" pour extraire les données. Pour les fauteuils, il est pertinent d'extraire : 
+		- Le titre de l'annonce
+		- Le prix
+		- Le lieu (ville et code postal)
+		- La description de l'annonce
+		- La première photo
+
+	Attention, sur LeBonCoin, les images sont chargées en javascript ! Mais il est tout de même possible de les récupérer facilement. Regardez le code source avec CTRL-U pour voir comment.
+
+3. SAUVEGARDER LES DONNÉES
+
+	Utilisez MySQL pour sauvegarder vos données. Pensez à des colonnes qui vous permettrons de savoir si l'item est nouveau, s'il a déjà été envoyé par email, sa date d'ajout en bdd, etc...
+	Utilisez le module "mysql" pour vous aider : https://github.com/mysqljs/mysql
+	Télécharger physiquement une image par item sur votre disque local, et sauvegardez le nom du fichier dans votre bdd. Utilisez le module "request" pour télécharger l'image (avec un pipe() et un createWriteStream()). 
+
+4. ENVOYER LES DONNÉES PAR EMAIL
+	
+	Utilisez NodeMailer pour vous aider : https://nodemailer.com/about/
+	Pour simuler l'envoi des emails et éviter les configurations SMTP, un petit logiciel sympa : https://github.com/changemakerstudios/papercut
+
+5. AFFICHER LES DONNÉES
+	
+	Créez un petit serveur HTTP qui permet d'afficher les données de votre BDD. Utilisez le module "http" avec "nunjucks", ou essayez "express" !
+
+6. DÉTECTER LES DONNÉES EXPIRÉES
+
+	Lorsque votre application tournera depuis des mois, des données seront fréquemment retirés du site scrapé (produit indisponible, annonce expirée, etc.). Détectez-les (erreur 404) et marquez-les comme "inactif" dans votre bdd. 
+
+7. RELANCER VOTRE SCRIPT
+
+	Votre script doit s'exécuter automatiquement à intervalle régulier. 3 choix s'offrent à vous : 
+		- Une tâche planifiée système (sous Windows) ou un CronJob sous Linux
+		- Un simple setInterval() sous Node.js
+		- Utiliser le module "node-schedule" : https://www.npmjs.com/package/node-schedule (recommandé)
+
+8. STATISTIQUES
+
+	Une fois que vous avez recueilli beaucoup de données, il peut être intéressant de calculer des statistiques : 
+		- Nombre d'annonces ajoutées par semaines
+		- Prix moyen de telles ou telles annonces
+		- Nombre de mots moyen par page
+		- Mots-clefs les plus fréquents
+		- etc.
