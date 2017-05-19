@@ -10,6 +10,11 @@
   "license": "ISC",
   "dependencies": {
     "cheerio": "^0.22.0",
-    "request": "^2.81.0"
+    "iconv": "^2.2.3",
+    "iconv-lite": "^0.4.17",
+    "mysql": "^2.13.0",
+    "nodemailer": "^4.0.1",
+    "request": "^2.81.0",
+    "windows-1252": "^1.0.0"
   }
 }
